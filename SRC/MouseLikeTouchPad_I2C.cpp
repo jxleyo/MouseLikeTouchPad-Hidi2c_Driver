@@ -72,7 +72,7 @@ AcpiGetDeviceInformation(
         EXPECTED_IOCTL_ACPI_GET_DEVICE_INFORMATION_STRING_LENGTH;
 
     acpiInfo = (PACPI_DEVICE_INFORMATION_OUTPUT_BUFFER)
-        HIDI2C_ALLOCATE_POOL(NonPagedPoolNx, acpiInfoSize);
+        HIDI2C_ALLOCATE_POOL(POOL_FLAG_NON_PAGED, acpiInfoSize);//HIDI2C_ALLOCATE_POOL(NonPagedPoolNx, acpiInfoSize);
 
     if (acpiInfo == NULL)
     {
@@ -158,7 +158,7 @@ AcpiGetDeviceMethod(
         sizeof(GUID);//检查是否=0x40
     KdPrint(("AcpiGetDeviceMethod acpiInputSize,%x\n", acpiInputSize)); ////检查是否=0x40
 
-    acpiInput = (PACPI_EVAL_INPUT_BUFFER_COMPLEX)HIDI2C_ALLOCATE_POOL(PagedPool, acpiInputSize);
+    acpiInput = (PACPI_EVAL_INPUT_BUFFER_COMPLEX)HIDI2C_ALLOCATE_POOL(POOL_FLAG_NON_PAGED, acpiInputSize);//HIDI2C_ALLOCATE_POOL(PagedPool, acpiInputSize)
 
     if (acpiInput == NULL)
     {
@@ -253,7 +253,7 @@ AcpiDsmSupported(
         (sizeof(ACPI_METHOD_ARGUMENT) * (ACPI_DSM_INPUT_ARGUMENTS_COUNT - 1)) +
         sizeof(GUID);
 
-    acpiInput = (PACPI_EVAL_INPUT_BUFFER_COMPLEX)HIDI2C_ALLOCATE_POOL(PagedPool, acpiInputSize);
+    acpiInput = (PACPI_EVAL_INPUT_BUFFER_COMPLEX)HIDI2C_ALLOCATE_POOL(POOL_FLAG_NON_PAGED, acpiInputSize);//HIDI2C_ALLOCATE_POOL(PagedPool, acpiInputSize)
 
     if (acpiInput == NULL)
     {
@@ -2177,7 +2177,7 @@ NTSTATUS HidInitialize(PDEVICE_CONTEXT pDevContext, WDF_POWER_DEVICE_STATE  FxPr
     }
 
     size_t InputReportMaxLength = pDevContext->HidSettings.InputReportMaxLength;
-    PVOID buffer = ExAllocatePoolWithTag(NonPagedPoolNx, InputReportMaxLength, HIDI2C_POOL_TAG);
+    PVOID buffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, InputReportMaxLength, HIDI2C_POOL_TAG);//ExAllocatePool2(POOL_FLAG_NON_PAGED, InputReportMaxLength, HIDI2C_POOL_TAG);
     pDevContext->pHidInputReport = (PBYTE)buffer;
 
     if (!buffer) {
@@ -2594,7 +2594,7 @@ HidWriteReport(
                     goto exit;
                 }
 
-                PBYTE pReportDesciptorData = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, OutputReportLength, HIDI2C_POOL_TAG);
+                PBYTE pReportDesciptorData = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, OutputReportLength, HIDI2C_POOL_TAG);
                 pReportData = pReportDesciptorData;
                 if (!pReportDesciptorData) {
                     status = STATUS_INSUFFICIENT_RESOURCES;
@@ -2751,7 +2751,7 @@ HidGetReport(
                 HeaderLength = 3;
                 PFlag = mflag | 0xF;
 
-                PBYTE pReportDesciptorHeader = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, 3, HIDI2C_POOL_TAG);
+                PBYTE pReportDesciptorHeader = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, 3, HIDI2C_POOL_TAG);
                 pReportData = pReportDesciptorHeader;
                 if (!pReportDesciptorHeader) {
                     status = STATUS_INSUFFICIENT_RESOURCES;
@@ -2775,7 +2775,7 @@ HidGetReport(
             KdPrintData(("HidGetReport pReportDataHeader=", pReportData, HeaderLength));
 
             RegisterAddressSecond = pDevContext->HidSettings.DataRegisterAddress;
-            pReportDesciptorData = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, reportBufferLen + 2, HIDI2C_POOL_TAG);
+            pReportDesciptorData = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, reportBufferLen + 2, HIDI2C_POOL_TAG);
             if (!pReportDesciptorData) {
                 status = STATUS_INSUFFICIENT_RESOURCES;
                 KdPrint(("HidGetReport pReportDesciptorData STATUS_INSUFFICIENT_RESOURCES,%x\n", status));
@@ -2892,7 +2892,7 @@ HidSetReport(
             HeaderLength = 3;
             *(PUSHORT)PFlag = mflag | 0xF;
 
-            PBYTE pReportDesciptorHeader = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, 3, HIDI2C_POOL_TAG);
+            PBYTE pReportDesciptorHeader = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, 3, HIDI2C_POOL_TAG);
             pReportData = pReportDesciptorHeader;
             if (!pReportDesciptorHeader) {
                 status = STATUS_INSUFFICIENT_RESOURCES;
@@ -2914,7 +2914,7 @@ HidSetReport(
         }
 
         RegisterAddressSecond = pDevContext->HidSettings.DataRegisterAddress;
-        pReportDesciptorData = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, reportBufferLen + 2, HIDI2C_POOL_TAG);
+        pReportDesciptorData = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, reportBufferLen + 2, HIDI2C_POOL_TAG);
         if (!pReportDesciptorData) {
             status = STATUS_INSUFFICIENT_RESOURCES;
             KdPrint(("HidSetReport pReportDesciptorData STATUS_INSUFFICIENT_RESOURCES,%x\n", status));
@@ -3410,7 +3410,7 @@ HidGetFeature(
                 HeaderLength = 3;
                 PFlag = mflag | 0xF;
 
-                PBYTE pReportDesciptorHeader = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, 3, HIDI2C_POOL_TAG);
+                PBYTE pReportDesciptorHeader = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, 3, HIDI2C_POOL_TAG);
                 pReportData = pReportDesciptorHeader;
                 if (!pReportDesciptorHeader) {
                     status = STATUS_INSUFFICIENT_RESOURCES;
@@ -3434,7 +3434,7 @@ HidGetFeature(
             KdPrint(("HidGetFeature pReportDataHeader=,%x\n", pReportData));
 
             RegisterAddressSecond = pDevContext->HidSettings.DataRegisterAddress;
-            pReportDesciptorData = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, reportBufferLen + 2, HIDI2C_POOL_TAG);
+            pReportDesciptorData = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, reportBufferLen + 2, HIDI2C_POOL_TAG);
             if (!pReportDesciptorData) {
                 status = STATUS_INSUFFICIENT_RESOURCES;
                 KdPrint(("HidGetFeature pReportDesciptorData STATUS_INSUFFICIENT_RESOURCES,%x\n", status));
@@ -3589,7 +3589,7 @@ HidSetFeature(
     }
 
     reportLength = 3 + reportDataSize;
-    pFeatureReportData = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, reportLength, HIDI2C_POOL_TAG);
+    pFeatureReportData = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, reportLength, HIDI2C_POOL_TAG);
     if (!pFeatureReportData) {
         status = STATUS_INSUFFICIENT_RESOURCES;
         KdPrint(("HidSetFeature pFeatureReportData STATUS_INSUFFICIENT_RESOURCES,%x\n", status));
@@ -3692,7 +3692,7 @@ PtpSetFeature(
     //reportLength = (USHORT)(hxp_size + reportDataSize + 2);
     //KdPrint(("PtpSetFeature reportLength=,%x\n", reportLength));
 
-    //pFeatureReportData = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, reportLength, HIDI2C_POOL_TAG);
+    //pFeatureReportData = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, reportLength, HIDI2C_POOL_TAG);
     //if (!pFeatureReportData) {
     //    status = STATUS_INSUFFICIENT_RESOURCES;
     //    KdPrint(("PtpSetFeature pFeatureReportData STATUS_INSUFFICIENT_RESOURCES,%x\n", status));
@@ -3716,7 +3716,7 @@ PtpSetFeature(
 
 
     reportLength = 3 + reportDataSize;
-    pFeatureReportData = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, reportLength, HIDI2C_POOL_TAG);
+    pFeatureReportData = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, reportLength, HIDI2C_POOL_TAG);
     if (!pFeatureReportData) {
         status = STATUS_INSUFFICIENT_RESOURCES;
         KdPrint(("PtpSetFeature pFeatureReportData STATUS_INSUFFICIENT_RESOURCES,%x\n", status));
@@ -3766,7 +3766,7 @@ GetReportDescriptor(
     USHORT RegisterAddress = pDevContext->HidSettings.ReportDescriptorAddress;
     USHORT ReportLength = pDevContext->HidSettings.ReportDescriptorLength;
 
-    PBYTE pReportDesciptorData = (PBYTE)ExAllocatePoolWithTag(NonPagedPoolNx, ReportLength, HIDI2C_POOL_TAG);
+    PBYTE pReportDesciptorData = (PBYTE)ExAllocatePool2(POOL_FLAG_NON_PAGED, ReportLength, HIDI2C_POOL_TAG);
     if (!pReportDesciptorData) {
         status = STATUS_INSUFFICIENT_RESOURCES;
         KdPrint(("GetReportDescriptor ExAllocatePoolWithTag failed,%x\n", status));
@@ -4014,15 +4014,19 @@ AnalyzeHidReportDescriptor(
     tp->PointerSensitivity_x = tp->TouchPad_DPMM_x / 25;
     tp->PointerSensitivity_y = tp->TouchPad_DPMM_y / 25;
 
-    tp->StartY_TOP = (ULONG)(10 * tp->TouchPad_DPMM_y);////起点误触横线Y值为距离触摸板顶部10mm处的Y坐标
 
-    //触摸板中心线较空格键中心线偏右10mm，然后不同的触摸板尺寸以此中心线为对称轴设计位置布局，DisabledX_RIGHT触摸板右侧区域防误触范围更大，
-    ULONG Offset = (ULONG)(10 * tp->TouchPad_DPMM_x);//触摸板中心线较空格键中心线偏右10mm，
-    ULONG SpaceCenterline = (ULONG)(40 * tp->TouchPad_DPMM_x);//起点误触竖线X值为距离空格键中心线左右侧40mm处的X坐标,
+    ////起点误触横线Y值为距离触摸板顶部10mm处的Y坐标
+    const float  DisabledRegionOffsetSize_top = 10;//该值可根据笔记本键盘和触摸板顶部距离适当调整
+    tp->StartY_TOP = (ULONG)(DisabledRegionOffsetSize_top * tp->TouchPad_DPMM_y);
+
+    //SpaceTouchpadOffsetSize为触摸板中心线较空格键中心线偏右的距离，然后不同的触摸板尺寸以此中心线为对称轴设计位置布局，DisabledX_RIGHT触摸板右侧区域防误触范围更大，
+    const float SpaceTouchpadOffsetSize = 10;//该值根据笔记本空格键和触摸板中下旬的距离适当调整,联想yoga小新thinkbook大部分为0mm对齐，大部分笔记本推荐10mm，华硕推荐12.5-15mm等等，
+    ULONG tpOffset = (ULONG)(SpaceTouchpadOffsetSize * tp->TouchPad_DPMM_x);//触摸板中心线较空格键中心线偏右SpaceTouchpadOffset的点阵数值，
+    ULONG DisabledLineWidth = (ULONG)(40 * tp->TouchPad_DPMM_x);//起点误触竖线X值为距离空格键中心线左右侧40mm偏移宽度处的触摸板X坐标,
     ULONG HalfWidthX = tp->logicalMax_X / 2;//触摸板一半宽度数值
 
-    LONG DisabledX_LEFT = HalfWidthX - SpaceCenterline - Offset;
-    ULONG DisabledX_RIGHT = HalfWidthX + SpaceCenterline - Offset;
+    LONG DisabledX_LEFT = HalfWidthX - DisabledLineWidth - tpOffset;
+    ULONG DisabledX_RIGHT = HalfWidthX + DisabledLineWidth - tpOffset;
 
     if (DisabledX_LEFT < 0) {
         tp->StartX_LEFT = 0;
@@ -4039,14 +4043,14 @@ AnalyzeHidReportDescriptor(
     }
 
     //触摸板边角功能键区域坐标
-    if (HalfWidthX > SpaceCenterline) {
+    if (HalfWidthX > DisabledLineWidth) {
         //
-        tp->CornerX_LEFT = HalfWidthX - SpaceCenterline;
-        tp->CornerX_RIGHT = HalfWidthX + SpaceCenterline;
+        tp->CornerX_LEFT = HalfWidthX - DisabledLineWidth;
+        tp->CornerX_RIGHT = HalfWidthX + DisabledLineWidth;
     }
     else {
-        tp->CornerX_LEFT = Offset;
-        tp->CornerX_RIGHT = tp->logicalMax_X- Offset;
+        tp->CornerX_LEFT = tpOffset;
+        tp->CornerX_RIGHT = tp->logicalMax_X- tpOffset;
     }
     
     KdPrint(("AnalyzeHidReportDescriptor tp->StartTop_Y =,%x\n", tp->StartY_TOP));

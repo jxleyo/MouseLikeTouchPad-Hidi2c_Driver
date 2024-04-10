@@ -3,10 +3,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TestCertificate>
     </TestCertificate>
-    <SignMode>TestSign</SignMode>
+    <SignMode>Off</SignMode>
     <ProductionCertificate>
     </ProductionCertificate>
     <CrossCertificateFile>
     </CrossCertificateFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TestCertificate>CN="WDKTestCert yoga14s,133572189524718599" | 82AD0C191FB118B5723710DD50CA554D59E44950</TestCertificate>
   </PropertyGroup>
 </Project>

@@ -430,7 +430,7 @@ const ULONGLONG HIDI2C_REQUEST_DEFAULT_TIMEOUT = 1000;//原先单位为秒太大改为ms
 #define HIDI2C_POOL_TAG 'MLTP'
 
 #define HIDI2C_ALLOCATE_POOL(Type, Size) \
-    ExAllocatePoolWithTag((Type), (Size), HIDI2C_POOL_TAG)
+    ExAllocatePool2((Type), (Size), HIDI2C_POOL_TAG)//ExAllocatePoolWithTag
 
 #define HIDI2C_FREE_POOL(Buffer) \
     ExFreePoolWithTag((Buffer), HIDI2C_POOL_TAG)
